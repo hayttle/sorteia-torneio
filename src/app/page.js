@@ -4,7 +4,7 @@ import axios from "axios"
 import {useEffect, useState} from "react"
 
 export default function Home() {
-  const DATABASE_URL = "https://restful-api-vercel-blush.vercel.app/"
+  const DATABASE_URL = "https://restful-api-vercel-hayttle.vercel.app/"
   const delay = (ms) => {
     return new Promise((resolve) => {
       setTimeout(resolve, ms)
