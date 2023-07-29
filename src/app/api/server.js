@@ -8,7 +8,7 @@ server.use(middlewares)
 // Add this before server.use(router)
 server.use(
   jsonServer.rewriter({
-    "/*": "/$1"
+    "/api/*": "/$1"
   })
 )
 server.use(router)
