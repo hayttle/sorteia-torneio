@@ -4,6 +4,7 @@ import axios from "axios"
 import {useEffect, useState} from "react"
 
 export default function Home() {
+  const DATABASE_URL = "https://restful-api-vercel-blush.vercel.app/"
   const delay = (ms) => {
     return new Promise((resolve) => {
       setTimeout(resolve, ms)
@@ -133,7 +134,7 @@ export default function Home() {
 
     confrontos.forEach(async (confronto) => {
       try {
-        await axios.post("http://localhost:3001/confrontos", confronto)
+        await axios.post(`${DATABASE_URL}/confrontos`, confronto)
         setConfrontosGerados(confrontos)
       } catch (error) {
         console.log(error)
@@ -155,14 +156,14 @@ export default function Home() {
     const duplas = sortearDuplas(atletasInscritosnaCategoria.atletas)
 
     try {
-      await axios.post(`http://localhost:3001/duplasSorteadas/`, {
+      await axios.post(`${DATABASE_URL}/duplasSorteadas/`, {
         categoria: categoria.name,
         categoria_id: categoria.id,
         duplas
       })
 
-      await axios.patch(`http://localhost:3001/categorias/${categoria.id}`, {drawed: true})
-      axios.get("http://localhost:3001/categorias").then(({data}) => setCategorias(data))
+      await axios.patch(`${DATABASE_URL}/categorias/${categoria.id}`, {drawed: true})
+      axios.get(`${DATABASE_URL}/categorias`).then(({data}) => setCategorias(data))
 
       setDuplasSorteadas([...duplasSorteadas, {categoria: categoria.name, duplas}])
     } catch (error) {
@@ -176,20 +177,18 @@ export default function Home() {
     }
 
     try {
-      await axios.patch(`http://localhost:3001/categorias/${categoria_id}`, {drawed: false})
-      axios.get("http://localhost:3001/categorias").then(({data}) => setCategorias(data))
+      await axios.patch(`${DATABASE_URL}/categorias/${categoria_id}`, {drawed: false})
+      axios.get(`${DATABASE_URL}/categorias`).then(({data}) => setCategorias(data))
 
-      const responseDuplasSorteadas = await axios.get(
-        `http://localhost:3001/duplasSorteadas?categoria_id=${categoria_id}`
-      )
+      const responseDuplasSorteadas = await axios.get(`${DATABASE_URL}/duplasSorteadas?categoria_id=${categoria_id}`)
       const idSorteioParaResetar = responseDuplasSorteadas.data[0].id
 
-      await axios.delete(`http://localhost:3001/duplasSorteadas/${idSorteioParaResetar}`)
+      await axios.delete(`${DATABASE_URL}/duplasSorteadas/${idSorteioParaResetar}`)
       axios
-        .get("http://localhost:3001/duplasSorteadas?_sort=categoria_id&_order=asc`")
+        .get(`${DATABASE_URL}/duplasSorteadas?_sort=categoria_id&_order=asc`)
         .then(({data}) => setDuplasSorteadas(data))
 
-      axios.get("http://localhost:3001/confrontos").then(({data}) => setConfrontosGerados(data))
+      axios.get(`${DATABASE_URL}/confrontos`).then(({data}) => setConfrontosGerados(data))
     } catch (error) {
       console.log(error)
     }
@@ -200,12 +199,12 @@ export default function Home() {
   }
 
   useEffect(() => {
-    axios.get("http://localhost:3001/categorias").then(({data}) => setCategorias(data))
-    axios.get("http://localhost:3001/inscricoes").then(({data}) => setInscricoes(data))
+    axios.get(`${DATABASE_URL}/categorias`).then(({data}) => setCategorias(data))
+    axios.get(`${DATABASE_URL}/inscricoes`).then(({data}) => setInscricoes(data))
     axios
-      .get("http://localhost:3001/duplasSorteadas?_sort=categoria_id&_order=asc`")
+      .get(`${DATABASE_URL}/duplasSorteadas?_sort=categoria_id&_order=asc`)
       .then(({data}) => setDuplasSorteadas(data))
-    axios.get("http://localhost:3001/confrontos").then(({data}) => setConfrontosGerados(data))
+    axios.get(`${DATABASE_URL}/confrontos`).then(({data}) => setConfrontosGerados(data))
   }, [])
 
   return (
